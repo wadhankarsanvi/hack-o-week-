@@ -1,0 +1,124 @@
+# College FAQ Chatbot using Word Dictionary Matching
+
+import re
+import difflib
+
+def normalize_text(text):
+    """
+    Normalize input by:
+    - converting to lowercase
+    - removing punctuation
+    - removing extra spaces
+    """
+    text = text.lower()
+    text = re.sub(r'[^a-z\s]', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+def correct_spelling(word, keywords):
+
+  match = difflib.get_close_matches(word, keywords, n=1, cutoff=0.75)
+  return match[0] if match else word
+
+
+
+
+def college_chatbot():
+    print("Welcome to SITBOT Chatbot ")
+    print("Ask about fees, timings, courses, contact, hostel, etc.")
+    print("Type 'exit' to quit.\n")
+
+    # Word dictionary: category -> keywords and answer
+    faq_data = {
+        "timings": {
+            "keywords": ["time", "timing", "hours", "college time"],
+            "answer": "College timings are from 9:00 AM to 4:00 PM."
+        },
+        "siu":{
+            "keywords":["SIU","Siu","Symbiosis international university"],
+            "answer":["SIU has no specific timing as there are different courses offered this chat bot is for sit only"]
+        },
+        "fees": {
+            "keywords": ["fees", "fee", "cost", "payment"],
+            "answer": "The annual fees range from ₹50,000 to ₹1,20,000 depending on the course."
+        },
+        "courses": {
+            "keywords": ["courses", "programs", "degree", "study"],
+            "answer": "We offer B.Tech, BBA, MBA, and M.Tech programs."
+        },
+        "contact": {
+            "keywords": ["contact", "phone", "number", "call"],
+            "answer": "You can contact us at +91-9876543210."
+        },
+        "email": {
+            "keywords": ["email", "mail"],
+            "answer": "Our email address is info@abccollege.edu"
+        },
+        "admission": {
+            "keywords": ["admission", "apply", "join", "enroll"],
+            "answer": "Admissions start in May and are based on entrance exams and merit."
+        },
+        "exam": {
+            "keywords": ["exam", "tests", "semester"],
+            "answer": "Exams are conducted at the end of each semester."
+        },
+        "hostel": {
+            "keywords": ["hostel", "room", "accommodation"],
+            "answer": "Hostel facilities are available for both boys and girls."
+        },
+        "library": {
+            "keywords": ["library", "books", "reading"],
+            "answer": "The library is open from 8:00 AM to 8:00 PM."
+        },
+        "placement": {
+            "keywords": ["placement", "job", "company"],
+            "answer": "Our placement cell offers opportunities with top companies.""\nOur last batch was placed 95% with the highest job offered with 44lakh package"
+        },
+        "transport": {
+            "keywords": ["transport", "bus", "travel"],
+            "answer": "College bus service is available from major city locations."
+        },
+        "location": {
+            "keywords": ["location", "where", "address"],
+            "answer": "ABC College is located in New Delhi."
+        }
+    }
+
+
+    all_keywords = []
+    for data in faq_data.values():
+        all_keywords.extend(data["keywords"])
+
+    while True:
+        user_input = input("You: ")
+        user_input = normalize_text(user_input)
+
+        if user_input == "exit":
+            print("Chatbot: Thank you! Have a great day ")
+            break
+
+        user_words = user_input.split()
+
+        # Correct spelling
+        corrected_words = [
+            correct_spelling(word, all_keywords) for word in user_words
+        ]
+
+        matched = False
+
+
+        # Match words from user question
+        for data in faq_data.values():
+            for keyword in data["keywords"]:
+                if keyword in corrected_words:
+                    print("Chatbot:", data["answer"])
+                    matched = True
+                    break
+            if matched:
+                break
+
+        if not matched:
+            print("Chatbot: Sorry, I couldn't understand your question.")
+
+# Run the chatbot
+college_chatbot()
